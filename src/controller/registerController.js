@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const { User } = require("../model/User");
+var jwt = require('jsonwebtoken');
 
 
 
@@ -7,7 +8,7 @@ let registerCotroller = (req,res)=>{
 
    // console.log("email",req.body.email)
  
-
+// If not registered before then insert the user info in mongodb
      // Using promises
 User.findOne({ email:req.body.email,username:req.body.username })
 .then((result) => {
@@ -20,14 +21,21 @@ User.findOne({ email:req.body.email,username:req.body.username })
     const saltRounds = 10;
     let encrypt = bcrypt.hashSync(req.body.password, saltRounds);
      req.body.password = encrypt
-    const register = new User(req.body);
-    register.save().then(() => console.log('register Succesfully')).catch((e)=>{
+    const user = new User(req.body);
+    user.save()
+    .then(() => {
+
+      // generate the JWt(json Web Token)
+      var token = jwt.sign(req.body, process.env.JWT_TOKEN);
+      res.status(200).json({
+        msg:"Data register Succesfully",
+        token:token
+    })})
+    .catch((e)=>{
     console.log("error",e)
     });
     //succesfull
-     res.status(200).json({
-         msg:"Data register Succesfully"
-     })
+  
   }else{
 
     //email aleready exits
