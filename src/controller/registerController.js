@@ -10,7 +10,7 @@ let registerCotroller = (req,res)=>{
  
 // If not registered before then insert the user info in mongodb
      // Using promises
-User.findOne({ email:req.body.email,username:req.body.username })
+User.findOne({ email:req.body.email})
 .then((result) => {
   // Handle the result here
   //console.log( "find",result);
@@ -33,6 +33,9 @@ User.findOne({ email:req.body.email,username:req.body.username })
     })})
     .catch((e)=>{
     console.log("error",e)
+    res.status(400).json({
+      msg:"Email and Username already exits"
+  })
     });
     //succesfull
   
@@ -48,6 +51,9 @@ User.findOne({ email:req.body.email,username:req.body.username })
 .catch((error) => {
   // Handle any errors here
   console.error("err",error);
+  res.status(400).json({
+    msg:"Email and Username already exits"
+})
   
 });
 
