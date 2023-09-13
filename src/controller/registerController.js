@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const { User } = require("../model/User");
-var jwt = require('jsonwebtoken');
+//var jwt = require('jsonwebtoken');
 
 
 
@@ -26,10 +26,10 @@ User.findOne({ email:req.body.email})
     .then(() => {
 
       // generate the JWt(json Web Token)
-      var token = jwt.sign(req.body, process.env.JWT_TOKEN);
+     // var token = jwt.sign(req.body, process.env.JWT_TOKEN);
       res.status(200).json({
         msg:"Data register Succesfully",
-        token:token
+       // token:token
     })})
     .catch((e)=>{
     console.log("error",e)

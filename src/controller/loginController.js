@@ -4,30 +4,39 @@ var jwt = require('jsonwebtoken');
 
 const loginController = (req, res) => {
 
-    console.log(req.body.username)
-    console.log("plain password", req.body.password)
+    // console.log("sss",req.body)
+    // console.log(req.body.username)
 
-    User.findOne({ username: req.body.username }).then((result) => {
-        console.log("user", result)
+    //   console.log("plain password", req.body.password)
+
+    User.findOne({ username: req.body.username }).then((users) => {
+        console.log("users", users)
 
         // if user is not empty
-        if (result !== null) {
+        if (users !== null) {
 
-
-            // conpare the password 
-            bcrypt.compare(req.body.password, result.password).then(function (result1) {
-                // result == true
-
-                //jason web token
-                var token = jwt.sign(req.body, process.env.JWT_TOKEN);
-                res.status(200).json({
-                    msg: "Login Succussfully",
-                    data: result,
-                    token
-                })
-            });
+            //bcrypt.compareSync(myPlaintextPassword, hash); // true
+            if(bcrypt.compareSync(req.body.password, users.password)){
+                //True
+                 //OK it okay
+                 console.log("username",users.username)
+                 res.status(200).json({
+                     msg:"Login Success",
+                     data:users,
+                     token: jwt.sign({users:users.username,role:users.role},process.env.JWT_TOKEN, {
+                         expiresIn: "1d",
+                     })
+                 })
 
             // if user is empty
+                }else{  
+                    //False
+                    res.status(403).json({
+                        msg:'Invalid credentials'
+                    });
+                }
+
+          
 
         } else {
             res.status(404).json({
